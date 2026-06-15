@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issuance xmlns="http://www.w3schools.com" sender="101454161">
+  <general>
+    <number>101454161-2026-00001383282</number>
+    <dateIssuance>2026-06-12</dateIssuance>
+    <dateTransaction>2026-06-06</dateTransaction>
+    <documentType>ORIGINAL</documentType>
+  </general>
+  <provider>
+    <providerStatus>SELLER</providerStatus>
+    <dependentPerson>false</dependentPerson>
+    <residentsOfOffshore>false</residentsOfOffshore>
+    <specialDealGoods>false</specialDealGoods>
+    <bigCompany>false</bigCompany>
+    <countryCode>112</countryCode>
+    <unp>101454161</unp>
+    <name>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ЛИБРЕТИК"</name>
+    <address>г. Минск, пр. Победителей, д. 89, корп.1, пом. 4, ком. 39</address>
+  </provider>
+  <recipient>
+    <recipientStatus>CUSTOMER</recipientStatus>
+    <dependentPerson>false</dependentPerson>
+    <residentsOfOffshore>false</residentsOfOffshore>
+    <specialDealGoods>false</specialDealGoods>
+    <bigCompany>false</bigCompany>
+    <countryCode>112</countryCode>
+    <unp>100200023</unp>
+    <name>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "БЕЛАРУСИЧ" МИНСКИЙ РАЙОН</name>
+    <address>220053 г. Минск, ул. Будславская, д. 2, ком. 4</address>
+  </recipient>
+  <senderReceiver>
+    <consignors>
+      <consignor>
+        <countryCode>112</countryCode>
+        <unp>101454161</unp>
+        <name>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "ЛИБРЕТИК"</name>
+        <address>г. Минск, ул. Долгиновский тракт, д. 178</address>
+      </consignor>
+    </consignors>
+    <consignees>
+      <consignee>
+        <countryCode>112</countryCode>
+        <unp>100200023</unp>
+        <name>ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ "БЕЛАРУСИЧ" МИНСКИЙ РАЙОН</name>
+        <address />
+      </consignee>
+    </consignees>
+  </senderReceiver>
+  <deliveryCondition>
+    <contract>
+      <documents>
+        <document>
+          <docType>
+            <code>0</code>
+          </docType>
+          <date>2026-06-06</date>
+          <number>69</number>
+        </document>
+      </documents>
+    </contract>
+  </deliveryCondition>
+  <roster totalCostVat="62.7" totalExcise="0" totalVat="8.53" totalCost="54.17">
+    <rosterItem>
+      <number>1</number>
+      <name>ХЛЕБ МАЙСКИЙ СВЕТЛЫЙ НАР.УПАК.470Г</name>
+      <code>1905903000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>1.2</price>
+      <cost>1.2</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.19</summaVat>
+      </vat>
+      <costVat>1.39</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>2</number>
+      <name>ГОРЧИЦА КАМАКО ФРАНЦУЗСКАЯ 170Г</name>
+      <code>2103309000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>2.75</price>
+      <cost>2.75</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.43</summaVat>
+      </vat>
+      <costVat>3.18</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>3</number>
+      <name>ЛИМОН 1КГ</name>
+      <code>0805501000</code>
+      <units>166</units>
+      <count>1.08600</count>
+      <price>8.31</price>
+      <cost>9.03</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>1.42</summaVat>
+      </vat>
+      <costVat>10.45</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>4</number>
+      <name>ЯЙЦО ПЕРЕП.СУСЕДСКИ МАЕНТАК 20ШТ</name>
+      <code>0407299000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>4.31</price>
+      <cost>4.31</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.68</summaVat>
+      </vat>
+      <costVat>4.99</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>5</number>
+      <name>ГОРЧИЦА КАМАКО ФРАНЦУЗСКАЯ 170Г</name>
+      <code>2103309000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>2.75</price>
+      <cost>2.75</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.43</summaVat>
+      </vat>
+      <costVat>3.18</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>6</number>
+      <name>ЛУК КРАСНЫЙ ИМПОР.1КГ</name>
+      <code>0703101900</code>
+      <units>166</units>
+      <count>0.64600</count>
+      <price>2.38</price>
+      <cost>1.54</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.24</summaVat>
+      </vat>
+      <costVat>1.78</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>7</number>
+      <name>ГОРЧИЦА КАМАКО ФРАНЦУЗСКАЯ 170Г</name>
+      <code>2103309000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>2.75</price>
+      <cost>2.75</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.43</summaVat>
+      </vat>
+      <costVat>3.18</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>8</number>
+      <name>ЯЙЦО ПЕРЕП.СУСЕДСКИ МАЕНТАК 20ШТ</name>
+      <code>0407299000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>4.31</price>
+      <cost>4.31</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.68</summaVat>
+      </vat>
+      <costVat>4.99</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>9</number>
+      <name>ГОРЧИЦА КАМАКО ФРАНЦУЗСКАЯ 170Г</name>
+      <code>2103309000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>2.75</price>
+      <cost>2.75</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.43</summaVat>
+      </vat>
+      <costVat>3.18</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>10</number>
+      <name>ИКРА ЗЕРН.ЛОСОСЕВАЯ 95Г</name>
+      <code>1604320010</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>21.58</price>
+      <cost>21.58</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>3.41</summaVat>
+      </vat>
+      <costVat>24.99</costVat>
+    </rosterItem>
+    <rosterItem>
+      <number>11</number>
+      <name>ХЛЕБ МАЙСКИЙ СВЕТЛЫЙ НАР.УПАК.470Г</name>
+      <code>1905903000</code>
+      <units>796</units>
+      <count>1.00000</count>
+      <price>1.2</price>
+      <cost>1.2</cost>
+      <summaExcise>0</summaExcise>
+      <vat>
+        <rate>13.6258</rate>
+        <rateType>CALCULATED</rateType>
+        <summaVat>0.19</summaVat>
+      </vat>
+      <costVat>1.39</costVat>
+    </rosterItem>
+  </roster>
+</issuance>
+
