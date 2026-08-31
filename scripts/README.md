@@ -1,11 +1,15 @@
+# Обслуживание дискового пространства на сервере
+
+| Файл | Назначение | Где запускать |
+| --- | --- | --- |
+| `Get-DiskUsage.ps1` | отчёт «что занимает место» | Windows Server (PowerShell 5.1 или 7+) |
+| `Clear-CrashDumps.ps1` | очистка папок с дампами у всех пользователей | Windows Server (PowerShell 5.1 или 7+) |
+| `clear-crashdumps.sh` | то же для Linux | Linux/Unix-сервер (bash 4+, GNU findutils) |
+
+Обычный порядок работы: сначала `Get-DiskUsage.ps1`, чтобы понять, куда ушло место,
+потом целевая очистка.
+
 # Очистка папок с аварийными дампами у всех пользователей
-
-Два независимых скрипта, выбирайте по ОС сервера:
-
-| Файл | Где запускать |
-| --- | --- |
-| `clear-crashdumps.sh` | Linux/Unix-сервер (bash 4+, GNU findutils) |
-| `Clear-CrashDumps.ps1` | Windows Server (PowerShell 5.1 или 7+) |
 
 Оба скрипта по умолчанию **удаляют только содержимое** папок с дампами, сами папки
 остаются на месте (Windows Error Reporting и приложения ожидают их существования).
@@ -111,3 +115,85 @@ $text = [IO.File]::ReadAllText($p, $enc) -replace '\$IsWindows -or ', ''
 
 Прогоните с `--dry-run` / `-WhatIf` и убедитесь, что в списке нет ничего лишнего:
 скрипты удаляют файлы безвозвратно, в корзину они не попадают.
+
+# Как понять, что занимает место на сервере
+
+## Скриптом
+
+```powershell
+.\Get-DiskUsage.ps1                                       # все диски, каталоги первого уровня
+.\Get-DiskUsage.ps1 -Path C:\ -Depth 2 -Top 30            # подробнее по системному диску
+.\Get-DiskUsage.ps1 -Path C:\ -IncludeFiles               # плюс самые большие файлы
+.\Get-DiskUsage.ps1 >> C:\Scripts\diskusage.log           # отчёт в файл
+```
+
+Скрипт печатает три блока: занятое/свободное место по дискам, самые тяжёлые каталоги
+и типовых «пожирателей» места (`Windows\Temp`, `SoftwareDistribution\Download`,
+`Windows\Installer`, `WinSxS`, `WER`, корзины, пользовательские `Temp` и `CrashDumps`,
+`pagefile.sys`, `hiberfil.sys`). Точки повторной обработки (junction, симлинки) не
+разворачиваются, поэтому одно и то же место не считается дважды. Запускать от имени
+администратора: иначе часть каталогов будет молча пропущена.
+
+Подсчёт идёт перебором файлов, на диске с миллионами файлов это десятки минут. Если
+нужен мгновенный результат — **WizTree** читает MFT напрямую и отрабатывает за
+секунды; **TreeSize Free** и **WinDirStat** удобнее визуально, но считают так же
+медленно.
+
+## Вручную, по шагам
+
+Сверху вниз: диск → крупные каталоги → конкретные файлы.
+
+```powershell
+Get-Volume                                                # свободное место по томам
+
+# самые тяжёлые каталоги первого уровня
+Get-ChildItem C:\ -Directory -Force | ForEach-Object {
+    $s = (Get-ChildItem $_.FullName -File -Recurse -Force -ErrorAction SilentlyContinue |
+          Measure-Object Length -Sum).Sum
+    [pscustomobject]@{ GB = [math]::Round($s / 1GB, 2); Path = $_.FullName }
+} | Sort-Object GB -Descending
+
+# самые большие файлы
+Get-ChildItem C:\ -File -Recurse -Force -ErrorAction SilentlyContinue |
+    Sort-Object Length -Descending | Select-Object -First 20 Length, FullName
+```
+
+Что почти всегда стоит проверить отдельно, потому что в такой разбивке это легко
+пропустить:
+
+```powershell
+vssadmin list shadowstorage                               # теневые копии, часто десятки ГБ
+Dism /Online /Cleanup-Image /AnalyzeComponentStore         # реальный «вес» WinSxS
+Dism /Online /Cleanup-Image /StartComponentCleanup         # и его очистка
+Get-WinEvent -ListLog * | Sort-Object FileSize -Descending |
+    Select-Object -First 10 LogName, FileSize              # разросшиеся журналы событий
+Get-ChildItem 'C:\Windows\Temp', 'C:\Windows\SoftwareDistribution\Download' -Recurse -Force |
+    Measure-Object Length -Sum                             # мусор обновлений
+```
+
+Отдельные частые причины на Windows Server: журналы IIS в `C:\inetpub\logs`, бэкапы
+и логи SQL Server (`.bak`, `.ldf`), профили пользователей на терминальном сервере,
+`C:\Windows\Installer` (кэш MSI — удалять оттуда вручную нельзя, чистить только
+`msizap`/переустановкой), файл подкачки и файл гибернации
+(`powercfg /hibernate off` освобождает объём, равный размеру ОЗУ).
+
+## На Linux
+
+```bash
+df -hT                                      # что вообще заполнено
+du -xh --max-depth=1 / 2>/dev/null | sort -h | tail -20   # крупные каталоги, не выходя за ФС
+du -xh --max-depth=1 /var | sort -h | tail  # спускаемся глубже по самому тяжёлому
+ncdu -x /                                   # интерактивно, если можно поставить пакет
+find / -xdev -type f -size +1G -exec ls -lh {} + 2>/dev/null   # файлы-гиганты
+journalctl --disk-usage                     # журналы systemd
+```
+
+Классическая ловушка: `df` показывает занятое место, а `du` — нет. Значит, файл удалён,
+но его держит открытым процесс, и место вернётся только после перезапуска сервиса:
+
+```bash
+sudo lsof -nP +L1 | sort -k7 -n | tail      # удалённые, но всё ещё открытые файлы
+```
+
+Вторая ловушка — кончились не байты, а inode (`df -i`): обычно это миллионы мелких
+файлов в каталогах сессий, очередях почты или тех же дампах.
