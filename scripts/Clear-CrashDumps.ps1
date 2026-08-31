@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Очищает папки аварийных дампов (CrashDumps / CrushDumps) у всех пользователей сервера.
 
@@ -37,6 +37,12 @@
 .EXAMPLE
     .\Clear-CrashDumps.ps1 -OlderThanDays 7
     Удалить дампы старше семи суток у всех пользователей.
+
+.NOTES
+    Файл обязан храниться в кодировке UTF-8 с BOM. Windows PowerShell 5.1 читает
+    .ps1 без BOM как ANSI (cp1251), русский текст рассыпается, и разбор падает с
+    ошибкой вида «Непредвиденная лексема ")"». Если пересохраняете файл вручную,
+    выбирайте «UTF-8 with BOM» либо «UTF-16 LE».
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -50,6 +56,9 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+# Чтобы русский текст в консоли не превращался в кашу (актуально для PowerShell 5.1).
+try { [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false) } catch { }
 
 function Format-Size {
     param([double]$Bytes)
@@ -76,14 +85,24 @@ function Get-UserProfilePath {
         $path = [Environment]::ExpandEnvironmentVariables($path)
         if (-not (Test-Path -LiteralPath $path -PathType Container)) { continue }
 
-        $name = try { (New-Object System.Security.Principal.SecurityIdentifier($sid)).Translate([System.Security.Principal.NTAccount]).Value }
-        catch { Split-Path $path -Leaf }
+        try {
+            $name = (New-Object System.Security.Principal.SecurityIdentifier($sid)).Translate(
+                [System.Security.Principal.NTAccount]).Value
+        }
+        catch {
+            $name = Split-Path $path -Leaf
+        }
 
         [pscustomobject]@{ User = $name; Profile = $path }
     }
 }
 
-if ($IsWindows -or $PSVersionTable.PSVersion.Major -le 5) {
+# $IsWindows появился только в PowerShell 6, в 5.1 переменной нет вовсе.
+$onWindows = $true
+$platformVar = Get-Variable -Name IsWindows -ErrorAction SilentlyContinue
+if ($platformVar) { $onWindows = [bool]$platformVar.Value }
+
+if ($onWindows) {
     $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
         [Security.Principal.WindowsBuiltInRole]::Administrator)
     if (-not $isAdmin) {

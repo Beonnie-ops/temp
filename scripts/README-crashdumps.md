@@ -64,6 +64,32 @@ Register-ScheduledTask -TaskName 'Clear CrashDumps' -Action $action -Trigger $tr
     -User 'SYSTEM' -RunLevel Highest
 ```
 
+## Если PowerShell 5.1 ругается «Непредвиденная лексема ")"»
+
+Симптом — в тексте ошибки вместо русских слов каша вида `РЈРґР°Р»РёС‚СЊ`:
+
+```
+Непредвиденная лексема ")" в выражении или операторе.
+C:\...\Clear-CrashDumps.ps1:133 знак:94
++ ... houldProcess($file.FullName, 'РЈРґР°Р»РёС‚СЊ С„Р°Р№Р» РґР°РјРїР°')) {
+```
+
+Причина не в коде: Windows PowerShell 5.1 читает `.ps1` без BOM как ANSI (cp1251),
+и байты UTF-8 распадаются на мусор, среди которого попадаются типографские кавычки
+(`‚`, `“`, `„`) — парсер принимает их за настоящие и теряет строку.
+
+В репозитории файл лежит в UTF-8 **с BOM**, поэтому проблемы быть не должно. Если
+вы пересохраняли его вручную (Блокнот, копирование из браузера), верните BOM:
+
+```powershell
+$p = 'C:\Users\d.shimonov.OFFICE\Desktop\crushdumps.ps1'
+$text = [IO.File]::ReadAllText($p, (New-Object Text.UTF8Encoding $false))
+[IO.File]::WriteAllText($p, $text, (New-Object Text.UTF8Encoding $true))
+```
+
+Альтернативы: сохранить файл в «UTF-8 with BOM» или «UTF-16 LE» из редактора либо
+запускать через PowerShell 7 (`pwsh.exe`), который по умолчанию считает `.ps1` UTF-8.
+
 ## Перед первым боевым запуском
 
 Прогоните с `--dry-run` / `-WhatIf` и убедитесь, что в списке нет ничего лишнего:
