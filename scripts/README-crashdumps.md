@@ -49,6 +49,9 @@ sudo ./clear-crashdumps.sh --dir dumps --dir minidumps  # другие имен�
 .\Clear-CrashDumps.ps1 -ProfilePath D:\Profiles\ivanov   # конкретный профиль
 ```
 
+Отчёт печатается в стандартный поток вывода, поэтому его можно перенаправлять в лог
+(`.\Clear-CrashDumps.ps1 -OlderThanDays 7 >> C:\Scripts\clear-crashdumps.log`).
+
 Профили берутся из реестра
 `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList`, поэтому находятся
 и профили вне `C:\Users`. Системные учётные записи пропускаются, включить их можно
@@ -89,6 +92,20 @@ $text = [IO.File]::ReadAllText($p, (New-Object Text.UTF8Encoding $false))
 
 Альтернативы: сохранить файл в «UTF-8 with BOM» или «UTF-16 LE» из редактора либо
 запускать через PowerShell 7 (`pwsh.exe`), который по умолчанию считает `.ps1` UTF-8.
+
+## Если PowerShell пишет «Переменная "$IsWindows" не может быть получена»
+
+Значит, у вас на диске версия скрипта до исправления: `$IsWindows` появился только
+в PowerShell 6, а под `Set-StrictMode` обращение к несуществующей переменной —
+фатальная ошибка. Проще всего скачать файл заново, но можно поправить и на месте
+(BOM при этом сохраняется):
+
+```powershell
+$p = 'C:\Users\d.shimonov.OFFICE\Desktop\crushdumps.ps1'
+$enc = New-Object Text.UTF8Encoding $true
+$text = [IO.File]::ReadAllText($p, $enc) -replace '\$IsWindows -or ', ''
+[IO.File]::WriteAllText($p, $text, $enc)
+```
 
 ## Перед первым боевым запуском
 

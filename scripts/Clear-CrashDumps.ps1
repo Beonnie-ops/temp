@@ -1,4 +1,5 @@
-﻿<#
+﻿#Requires -Version 5.1
+<#
 .SYNOPSIS
     Очищает папки аварийных дампов (CrashDumps / CrushDumps) у всех пользователей сервера.
 
@@ -56,9 +57,6 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
-
-# Чтобы русский текст в консоли не превращался в кашу (актуально для PowerShell 5.1).
-try { [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false) } catch { }
 
 function Format-Size {
     param([double]$Bytes)
@@ -145,7 +143,7 @@ foreach ($userProfile in $profiles) {
         $totalFiles += $files.Count
         $totalBytes += $bytes
 
-        Write-Host ('{0}: {1} — файлов: {2}, объём: {3}' -f `
+        Write-Output ('{0}: {1} — файлов: {2}, объём: {3}' -f `
                 $userProfile.User, $target.FullName, $files.Count, (Format-Size $bytes))
 
         foreach ($file in $files) {
@@ -172,5 +170,5 @@ foreach ($userProfile in $profiles) {
     }
 }
 
-Write-Host ('Итого: каталогов {0}, файлов {1}, объём {2}' -f `
+Write-Output ('Итого: каталогов {0}, файлов {1}, объём {2}' -f `
         $totalDirs, $totalFiles, (Format-Size $totalBytes))
